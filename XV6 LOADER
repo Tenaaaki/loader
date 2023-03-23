@@ -1,0 +1,196 @@
+repeat task.wait() until game:IsLoaded()
+repeat task.wait() until shared.GuiLibrary
+local uis = game:GetService("UserInputService")
+local GuiLibrary = shared.GuiLibrary
+local ScriptSettings = {}
+local UIS = game:GetService("UserInputService")
+local COB = function(tab, argstable) 
+	return GuiLibrary["ObjectsThatCanBeSaved"][tab.."Window"]["Api"].CreateOptionsButton(argstable)
+end
+function securefunc(func)
+	task.spawn(function()
+		spawn(function()
+			pcall(function()
+				loadstring(
+					func()
+				)()
+			end)
+		end)
+	end)
+end
+function warnnotify(title, content, duration)
+	local frame = GuiLibrary["CreateNotification"](title or "xv6ware", content or "Config", duration or 5, "assets/WarningNotification.png")
+	frame.Frame.Frame.ImageColor3 = Color3.fromRGB(255, 64, 64)
+end
+function infonotify(title, content, duration)
+	local frame = GuiLibrary["CreateNotification"](title or "xv6ware", content or "Config", duration or 5, "assets/InfoNotification.png")
+	frame.Frame.Frame.ImageColor3 = Color3.fromRGB(255, 64, 64)
+end
+function getstate()
+	local ClientStoreHandler = require(game.Players.LocalPlayer.PlayerScripts.TS.ui.store).ClientStore
+	return ClientStoreHandler:getState().Game.matchState
+end
+function iscustommatch()
+	local ClientStoreHandler = require(game.Players.LocalPlayer.PlayerScripts.TS.ui.store).ClientStore
+	return ClientStoreHandler:getState().Game.customMatch
+end
+function checklagback()
+	local hrp = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
+	return isnetworkowner(hrp)
+end
+
+GuiLibrary["MainGui"].ScaledGui.ClickGui.Version.Text = "ez"
+GuiLibrary["MainGui"].ScaledGui.ClickGui.MainWindow.TextLabel.Text = "ez"
+GuiLibrary["MainGui"].ScaledGui.ClickGui.Version.Version.Text = "ez"
+GuiLibrary["MainGui"].ScaledGui.ClickGui.Version.Position = UDim2.new(1, -175 - 20, 1, -25)
+infonotify("xv6ware", "loading..", 5)
+wait(1.5)
+warnnotify("xv6ware", "Loaded! ", 5)
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local yes = Players.LocalPlayer.Name
+local ChatTag = {}
+ChatTag[yes] =
+    {
+        TagText = "XV6WARE PRIVATE",
+        TagColor = Color3.fromRGB(102,0,255),
+    }
+
+
+
+    local oldchanneltab
+    local oldchannelfunc
+    local oldchanneltabs = {}
+
+
+for i, v in pairs(getconnections(ReplicatedStorage.DefaultChatSystemChatEvents.OnNewMessage.OnClientEvent)) do
+    if
+        v.Function
+        and #debug.getupvalues(v.Function) > 0
+        and type(debug.getupvalues(v.Function)[1]) == "table"
+        and getmetatable(debug.getupvalues(v.Function)[1])
+        and getmetatable(debug.getupvalues(v.Function)[1]).GetChannel
+    then
+        oldchanneltab = getmetatable(debug.getupvalues(v.Function)[1])
+        oldchannelfunc = getmetatable(debug.getupvalues(v.Function)[1]).GetChannel
+        getmetatable(debug.getupvalues(v.Function)[1]).GetChannel = function(Self, Name)
+            local tab = oldchannelfunc(Self, Name)
+            if tab and tab.AddMessageToChannel then
+                local addmessage = tab.AddMessageToChannel
+                if oldchanneltabs[tab] == nil then
+                    oldchanneltabs[tab] = tab.AddMessageToChannel
+                end
+                tab.AddMessageToChannel = function(Self2, MessageData)
+                    if MessageData.FromSpeaker and Players[MessageData.FromSpeaker] then
+                        if ChatTag[Players[MessageData.FromSpeaker].Name] then
+                            MessageData.ExtraData = {
+                                NameColor = Players[MessageData.FromSpeaker].Team == nil and Color3.new(128,0,128)
+                                    or Players[MessageData.FromSpeaker].TeamColor.Color,
+                                Tags = {
+                                    table.unpack(MessageData.ExtraData.Tags),
+                                    {
+                                        TagColor = ChatTag[Players[MessageData.FromSpeaker].Name].TagColor,
+                                        TagText = ChatTag[Players[MessageData.FromSpeaker].Name].TagText,
+                                    },
+                                },
+                            }
+                        end
+                    end
+                    return addmessage(Self2, MessageData)
+                end
+            end
+            return tab
+        end
+    end
+end
+
+local void = GuiLibrary["ObjectsThatCanBeSaved"]["WorldWindow"]["Api"].CreateOptionsButton({
+    ["Name"] = "GalaxySky",
+    ["Function"] = function(v)
+        if v then
+            game.Lighting.Sky.SkyboxBk = "http://www.roblox.com/asset/?id=159454299"
+            game.Lighting.Sky.SkyboxDn = "http://www.roblox.com/asset/?id=159454296"
+            game.Lighting.Sky.SkyboxFt = "http://www.roblox.com/asset/?id=159454293"
+            game.Lighting.Sky.SkyboxLf = "http://www.roblox.com/asset/?id=159454286"
+            game.Lighting.Sky.SkyboxRt = "http://www.roblox.com/asset/?id=159454300"
+            game.Lighting.Sky.SkyboxUp = "http://www.roblox.com/asset/?id=159454288"
+            game.Lighting.FogColor = Color3.new(236, 88, 241)
+            game.Lighting.FogEnd = "200"
+            game.Lighting.FogStart = "0"
+            game.Lighting.Ambient = Color3.new(0.5, 0, 1)
+        else
+            game.Lighting.Sky.SkyboxBk = "http://www.roblox.com/asset/?id=7018684000"
+            game.Lighting.Sky.SkyboxDn = "http://www.roblox.com/asset/?id=6334928194"
+            game.Lighting.Sky.SkyboxFt = "http://www.roblox.com/asset/?id=7018684000"
+            game.Lighting.Sky.SkyboxLf = "http://www.roblox.com/asset/?id=7018684000"
+            game.Lighting.Sky.SkyboxRt = "http://www.roblox.com/asset/?id=7018684000"
+            game.Lighting.Sky.SkyboxUp = "http://www.roblox.com/asset/?id=7018689553"
+            game.Lighting.FogColor = Color3.new(1, 1, 1)
+            game.Lighting.FogEnd = "10000"
+            game.Lighting.FogStart = "0"
+            game.Lighting.Ambient = Color3.new(0, 0, 0)
+        end
+    end
+})
+
+
+local AnticheatDisabler = COB("Blatant", {
+    Name = "InfiniteJump",
+    Function = function(callback) 
+        if callback then
+local InfiniteJumpEnabled = true
+game:GetService("UserInputService").JumpRequest:connect(function()
+	if InfiniteJumpEnabled then
+		game:GetService"Players".LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
+	end
+end)
+        end
+    end,
+    Default = false,
+    HoverText = "Shit feature, dont use"
+})
+		
+
+local void = GuiLibrary["ObjectsThatCanBeSaved"]["WorldWindow"]["Api"].CreateOptionsButton({
+    ["Name"] = "Salad's Texture Pack ",
+    ["Function"] = function(callback)
+        if callback then
+            local Settings = {
+                Resize = true, --false if not resize, true if resize
+                ResizeNum = 1, --default is 1
+                Color = Color3.fromRGB(102, 51, 153), --put rgb color here
+                LoadTime = 1 --to prevent not working
+            }
+            
+            repeat task.wait() until game:IsLoaded()
+            local bwgames = {6872274481,8444591321,8560631822}
+            if not table.find(bwgames,game.PlaceId) then return end
+            task.wait(Settings.LoadTime)
+            local cam = game:GetService("Workspace").Camera
+            cam:WaitForChild("Viewmodel")
+            cam.Viewmodel.ChildAdded:Connect(function(model)
+                if model:FindFirstChild("Handle") then
+                    local handle = model:FindFirstChild("Handle")
+                    local name = string.lower(model.Name)
+                    if Settings.Resize == true then
+                        handle.Size = handle.Size / Settings.ResizeNum
+                    end
+                    handle.Material = Enum.Material.Glass
+                    handle.TextureID = ""
+                    handle.Color = Settings.Color
+                    if name:find("sword") then
+                        handle.MeshId = "rbxassetid://11216117592"
+                    elseif name:find("snowball") then
+                        handle.MeshId = "rbxassetid://11216343798"
+                    end
+                end
+            end)
+        end
+end
+})
+
+
+
+
+
